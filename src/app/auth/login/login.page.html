@@ -1,0 +1,81 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Login - DigitalTrack</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <div class="logo-section">
+      <ion-icon name="analytics-outline" size="large" color="primary"></ion-icon>
+      <h1>DigitalTrack</h1>
+      <p>Welcome back! Please sign in to your account.</p>
+    </div>
+
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="credentials.email"
+          name="email"
+          required
+          placeholder="Enter your email">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="credentials.password"
+          name="password"
+          required
+          placeholder="Enter your password">
+        </ion-input>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="!loginForm.form.valid"
+        class="login-button">
+        Login
+      </ion-button>
+    </form>
+
+    <div class="signup-section">
+      <p>Don't have an account?</p>
+      <ion-button fill="clear" (click)="goToSignup()">
+        Sign Up Here
+      </ion-button>
+    </div>
+
+    <div class="demo-credentials">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Demo Credentials</ion-card-title>
+          <ion-card-subtitle>Tap any row to auto-fill</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="demo-row" (click)="fillCredentials('superadmin@digitaltrack.com', 'superadmin123')">
+            <span class="demo-role super-admin">Super Admin</span>
+            <span class="demo-info">superadmin@digitaltrack.com / superadmin123</span>
+          </div>
+          <div class="demo-row" (click)="fillCredentials('admin@digitaltrack.com', 'admin123')">
+            <span class="demo-role admin">Admin</span>
+            <span class="demo-info">admin@digitaltrack.com / admin123</span>
+          </div>
+          <div class="demo-row" (click)="fillCredentials('sales@digitaltrack.com', 'sales123')">
+            <span class="demo-role sales">Sales Team</span>
+            <span class="demo-info">sales@digitaltrack.com / sales123</span>
+          </div>
+          <div class="demo-row" (click)="fillCredentials('user@digitaltrack.com', 'user123')">
+            <span class="demo-role user">User</span>
+            <span class="demo-info">user@digitaltrack.com / user123</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

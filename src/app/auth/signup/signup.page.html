@@ -1,0 +1,111 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Sign Up - DigitalTrack</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="signup-container">
+    <div class="logo-section">
+      <ion-icon name="analytics-outline" size="large" color="primary"></ion-icon>
+      <h1>Join DigitalTrack</h1>
+      <p>Create your account to get started.</p>
+    </div>
+
+    <form (ngSubmit)="signup()" #signupForm="ngForm">
+      <ion-item>
+        <ion-label position="stacked">First Name</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="signupData.firstName"
+          name="firstName"
+          required
+          placeholder="Enter your first name">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Last Name</ion-label>
+        <ion-input
+          type="text"
+          [(ngModel)]="signupData.lastName"
+          name="lastName"
+          required
+          placeholder="Enter your last name">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input
+          type="email"
+          [(ngModel)]="signupData.email"
+          name="email"
+          required
+          placeholder="Enter your email">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="signupData.password"
+          name="password"
+          required
+          placeholder="Enter your password">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Confirm Password</ion-label>
+        <ion-input
+          type="password"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          required
+          placeholder="Confirm your password">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Role</ion-label>
+        <ion-select [(ngModel)]="signupData.role" name="role" placeholder="Select your role">
+          <ion-select-option [value]="userRoles.USER">User</ion-select-option>
+          <ion-select-option [value]="userRoles.SALES_TEAM">Sales Team</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        type="submit"
+        [disabled]="!signupForm.form.valid"
+        class="signup-button">
+        Sign Up
+      </ion-button>
+    </form>
+
+    <div class="login-section">
+      <p>Already have an account?</p>
+      <ion-button fill="clear" (click)="goToLogin()">
+        Login Here
+      </ion-button>
+    </div>
+
+    <div class="info-section">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Account Approval Process</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>After signing up, you'll need to:</p>
+          <ol>
+            <li>Verify your email address</li>
+            <li>Wait for admin approval</li>
+            <li>Once approved, you can login and access the app</li>
+          </ol>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

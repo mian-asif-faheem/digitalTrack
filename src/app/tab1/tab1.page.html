@@ -1,0 +1,87 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>DigitalTrack</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="home-container">
+    <div class="welcome-section">
+      <div class="logo-section">
+        <ion-icon name="analytics-outline" size="large" color="primary"></ion-icon>
+        <h1>Welcome to DigitalTrack</h1>
+        <p *ngIf="currentUser">Hello, {{ currentUser.firstName }} {{ currentUser.lastName }}!</p>
+      </div>
+      
+      <ion-chip [color]="getRoleColor()" *ngIf="currentUser">
+        <ion-label>{{ getRoleDisplayName() }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <div class="quick-actions">
+      <h2>Quick Actions</h2>
+      
+      <div class="actions-grid">
+        <ion-card class="action-card" button (click)="navigateToAnalytics()">
+          <ion-card-content>
+            <ion-icon name="analytics-outline" color="primary"></ion-icon>
+            <h3>View Analytics</h3>
+            <p>Check your performance metrics</p>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="action-card" button (click)="navigateToProfile()">
+          <ion-card-content>
+            <ion-icon name="person-outline" color="secondary"></ion-icon>
+            <h3>My Profile</h3>
+            <p>Update your account settings</p>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card 
+          class="action-card" 
+          button 
+          (click)="navigateToUserManagement()" 
+          *ngIf="isAdmin()">
+          <ion-card-content>
+            <ion-icon name="people-outline" color="warning"></ion-icon>
+            <h3>User Management</h3>
+            <p>Approve pending users</p>
+            <ion-badge color="danger" *ngIf="pendingUsersCount > 0">
+              {{ pendingUsersCount }}
+            </ion-badge>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="action-card" button *ngIf="isSalesTeam()">
+          <ion-card-content>
+            <ion-icon name="briefcase-outline" color="success"></ion-icon>
+            <h3>Sales Dashboard</h3>
+            <p>Track your sales performance</p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <div class="recent-activity" *ngIf="currentUser">
+      <h2>Recent Activity</h2>
+      <ion-card>
+        <ion-card-content>
+          <div class="activity-item">
+            <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+            <div class="activity-content">
+              <h4>Account Approved</h4>
+              <p>Your account was approved and activated</p>
+              <ion-note>{{ currentUser.approvedAt | date:'medium' }}</ion-note>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>

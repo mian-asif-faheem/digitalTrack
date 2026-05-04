@@ -1,0 +1,114 @@
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.logo-section {
+  text-align: center;
+  margin-bottom: 40px;
+  
+  ion-icon {
+    margin-bottom: 16px;
+  }
+  
+  h1 {
+    color: var(--ion-color-primary);
+    margin: 16px 0 8px 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    margin: 0 0 20px 0;
+  }
+}
+
+ion-item {
+  margin-bottom: 16px;
+  --border-radius: 8px;
+  --background: var(--ion-color-light);
+}
+
+.login-button {
+  margin: 32px 0 24px 0;
+  --border-radius: 8px;
+  height: 48px;
+  font-weight: 600;
+}
+
+.signup-section {
+  text-align: center;
+  margin: 24px 0;
+  
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 8px;
+  }
+}
+
+.demo-credentials {
+  margin-top: 40px;
+
+  ion-card {
+    --background: var(--ion-color-light);
+
+    ion-card-title {
+      font-size: 1.1rem;
+      color: var(--ion-color-primary);
+    }
+
+    ion-card-subtitle {
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+  }
+
+  .demo-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--ion-color-light-shade);
+    }
+
+    &:active {
+      background: var(--ion-color-light-shade);
+    }
+  }
+
+  .demo-role {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+
+    &.super-admin { background: #7c3aed22; color: #7c3aed; }
+    &.admin       { background: #dc262622; color: #dc2626; }
+    &.sales       { background: #d9770622; color: #d97706; }
+    &.user        { background: #05966922; color: #059669; }
+  }
+
+  .demo-info {
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    word-break: break-all;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-container {
+    padding: 16px;
+  }
+  
+  .logo-section h1 {
+    font-size: 2rem;
+  }
+}

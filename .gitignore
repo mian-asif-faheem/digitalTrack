@@ -1,0 +1,5 @@
+node_modules
+.angular/cache
+dist
+.DS_Store
+*.DS_Store

@@ -1,0 +1,100 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>User Management</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="user-management-container">
+    <div class="header-section">
+      <h2>Pending User Approvals</h2>
+      <p *ngIf="pendingUsers.length === 0" class="no-users-message">
+        No pending users at this time.
+      </p>
+    </div>
+
+    <div class="users-list" *ngIf="pendingUsers.length > 0">
+      <ion-card *ngFor="let user of pendingUsers" class="user-card">
+        <ion-card-header>
+          <div class="user-header">
+            <div class="user-info">
+              <ion-card-title>{{ user.firstName }} {{ user.lastName }}</ion-card-title>
+              <ion-card-subtitle>{{ user.email }}</ion-card-subtitle>
+            </div>
+            <ion-chip [color]="getRoleColor(user.role)">
+              <ion-label>{{ getRoleDisplayName(user.role) }}</ion-label>
+            </ion-chip>
+          </div>
+        </ion-card-header>
+
+        <ion-card-content>
+          <div class="user-details">
+            <div class="detail-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>Registered: {{ user.createdAt | date:'short' }}</span>
+            </div>
+            
+            <div class="detail-item">
+              <ion-icon name="mail-outline"></ion-icon>
+              <span>Email Verified: 
+                <ion-badge [color]="user.isEmailVerified ? 'success' : 'warning'">
+                  {{ user.isEmailVerified ? 'Yes' : 'No' }}
+                </ion-badge>
+              </span>
+            </div>
+          </div>
+
+          <div class="action-buttons">
+            <ion-button 
+              fill="solid" 
+              color="success" 
+              (click)="approveUser(user)"
+              [disabled]="!user.isEmailVerified">
+              <ion-icon name="checkmark-outline" slot="start"></ion-icon>
+              Approve
+            </ion-button>
+            
+            <ion-button 
+              fill="outline" 
+              color="danger" 
+              (click)="rejectUser(user)">
+              <ion-icon name="close-outline" slot="start"></ion-icon>
+              Reject
+            </ion-button>
+          </div>
+
+          <div class="email-verification-note" *ngIf="!user.isEmailVerified">
+            <ion-note color="warning">
+              <ion-icon name="warning-outline"></ion-icon>
+              User must verify their email before approval
+            </ion-note>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <div class="stats-section" *ngIf="pendingUsers.length > 0">
+      <ion-card class="stats-card">
+        <ion-card-header>
+          <ion-card-title>Statistics</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-number">{{ pendingUsers.length }}</div>
+              <div class="stat-label">Pending Users</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">{{ getEmailVerifiedCount() }}</div>
+              <div class="stat-label">Email Verified</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">{{ getSalesTeamCount() }}</div>
+              <div class="stat-label">Sales Team</div>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content>
