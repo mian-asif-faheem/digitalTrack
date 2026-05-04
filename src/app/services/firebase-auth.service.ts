@@ -94,6 +94,9 @@ export class FirebaseAuthService {
         };
       }
 
+      this.currentUserSubject.next(userData);
+      this.isAuthenticatedSubject.next(true);
+
       return {
         success: true,
         message: 'Login successful',
