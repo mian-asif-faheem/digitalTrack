@@ -77,7 +77,7 @@
             <div class="activity-content">
               <h4>Account Approved</h4>
               <p>Your account was approved and activated</p>
-              <ion-note>{{ currentUser.approvedAt | date:'medium' }}</ion-note>
+              <ion-note>{{ $any(currentUser.approvedAt)?.toDate() | date:'medium' }}</ion-note>
             </div>
           </div>
         </ion-card-content>

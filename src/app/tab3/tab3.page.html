@@ -1,17 +1,151 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 3
-    </ion-title>
+    <ion-title>Profile</ion-title>
+    <ion-buttons slot="end">
+      @if (!isEditing) {
+        <ion-button (click)="startEdit()">
+          <ion-icon name="create-outline"></ion-icon>
+        </ion-button>
+      }
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  @if (currentUser) {
+    <div class="profile-container">
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+      <!-- Avatar -->
+      <div class="avatar-section">
+        <div class="avatar">{{ getInitials() }}</div>
+        @if (!isEditing) {
+          <h2>{{ currentUser.firstName }} {{ currentUser.lastName }}</h2>
+        }
+        <ion-chip [color]="getRoleColor()">{{ getRoleLabel() }}</ion-chip>
+      </div>
+
+      <!-- Edit Name Form -->
+      @if (isEditing) {
+        <ion-card class="edit-card">
+          <ion-card-header>
+            <ion-card-title>Edit Profile</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-item>
+              <ion-label position="stacked">First Name</ion-label>
+              <ion-input [(ngModel)]="editForm.firstName" placeholder="First name" clearInput></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="stacked">Last Name</ion-label>
+              <ion-input [(ngModel)]="editForm.lastName" placeholder="Last name" clearInput></ion-input>
+            </ion-item>
+            <div class="edit-actions">
+              <ion-button fill="outline" (click)="cancelEdit()">Cancel</ion-button>
+              <ion-button (click)="saveProfile()">Save</ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      @if (!isEditing) {
+        <!-- Account Info -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Account Info</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="no-padding">
+            <ion-list lines="full">
+              <ion-item>
+                <ion-icon name="mail-outline" slot="start" color="primary"></ion-icon>
+                <ion-label>
+                  <p>Email</p>
+                  <h3>{{ currentUser.email }}</h3>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="shield-outline" slot="start" color="primary"></ion-icon>
+                <ion-label>
+                  <p>Role</p>
+                  <h3>{{ getRoleLabel() }}</h3>
+                </ion-label>
+              </ion-item>
+              <ion-item>
+                <ion-icon name="calendar-outline" slot="start" color="primary"></ion-icon>
+                <ion-label>
+                  <p>Member Since</p>
+                  <h3>{{ $any(currentUser.createdAt)?.toDate() | date:'mediumDate' }}</h3>
+                </ion-label>
+              </ion-item>
+              @if (currentUser.approvedAt) {
+                <ion-item>
+                  <ion-icon name="checkmark-circle-outline" slot="start" color="success"></ion-icon>
+                  <ion-label>
+                    <p>Approved On</p>
+                    <h3>{{ $any(currentUser.approvedAt)?.toDate() | date:'mediumDate' }}</h3>
+                  </ion-label>
+                </ion-item>
+              }
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Account Status -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Account Status</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="no-padding">
+            <ion-list lines="full">
+              <ion-item>
+                <ion-icon
+                  [name]="currentUser.isEmailVerified ? 'checkmark-circle' : 'close-circle'"
+                  [color]="currentUser.isEmailVerified ? 'success' : 'danger'"
+                  slot="start">
+                </ion-icon>
+                <ion-label>Email Verified</ion-label>
+                <ion-badge slot="end" [color]="currentUser.isEmailVerified ? 'success' : 'danger'">
+                  {{ currentUser.isEmailVerified ? 'Verified' : 'Unverified' }}
+                </ion-badge>
+              </ion-item>
+              <ion-item>
+                <ion-icon
+                  [name]="currentUser.isApproved ? 'checkmark-circle' : 'time'"
+                  [color]="currentUser.isApproved ? 'success' : 'warning'"
+                  slot="start">
+                </ion-icon>
+                <ion-label>Account Approved</ion-label>
+                <ion-badge slot="end" [color]="currentUser.isApproved ? 'success' : 'warning'">
+                  {{ currentUser.isApproved ? 'Approved' : 'Pending' }}
+                </ion-badge>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Security -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Security</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="no-padding">
+            <ion-list lines="none">
+              <ion-item button (click)="openChangePassword()" detail>
+                <ion-icon name="lock-closed-outline" slot="start" color="primary"></ion-icon>
+                <ion-label>Change Password</ion-label>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Logout -->
+        <div class="logout-section">
+          <ion-button expand="block" color="danger" fill="outline" (click)="logout()">
+            <ion-icon name="log-out-outline" slot="start"></ion-icon>
+            Logout
+          </ion-button>
+        </div>
+      }
+
+    </div>
+  }
 </ion-content>

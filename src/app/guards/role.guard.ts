@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
+import { FirebaseAuthService } from '../services/firebase-auth.service';
 import { UserRole } from '../models/user.model';
 
 @Injectable({
@@ -8,20 +8,22 @@ import { UserRole } from '../models/user.model';
 })
 export class RoleGuard implements CanActivate {
   constructor(
-    private authService: AuthService,
+    private authService: FirebaseAuthService,
     private router: Router
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
+    await this.authService.waitForAuthReady();
+
     const requiredRoles = route.data['roles'] as UserRole[];
-    
+
     if (!this.authService.isAuthenticated()) {
-      this.router.navigate(['/login']);
+      this.router.navigateByUrl('/login', { replaceUrl: true });
       return false;
     }
 
     if (requiredRoles && !this.authService.hasRole(requiredRoles)) {
-      this.router.navigate(['/tabs/tab1']); // Redirect to home
+      this.router.navigate(['/tabs/tab1']);
       return false;
     }
 

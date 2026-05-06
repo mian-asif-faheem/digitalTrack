@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { FirebaseAuthService } from '../services/firebase-auth.service';
+import { UserRole } from '../models/user.model';
 
 @Component({
   selector: 'app-tabs',
@@ -7,7 +9,9 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class TabsPage {
+  constructor(public authSvc: FirebaseAuthService) {}
 
-  constructor() {}
-
+  get isSuperAdmin(): boolean {
+    return this.authSvc.currentUser?.role === UserRole.SUPER_ADMIN;
+  }
 }

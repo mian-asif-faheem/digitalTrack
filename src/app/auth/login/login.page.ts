@@ -24,9 +24,8 @@ export class LoginPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    // Check if user is already authenticated
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/tabs']);
+      this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
     }
   }
 
@@ -46,7 +45,7 @@ export class LoginPage implements OnInit {
       await loading.dismiss();
 
       if (response.success) {
-        this.router.navigate(['/tabs']);
+        this.router.navigateByUrl('/tabs/tab1', { replaceUrl: true });
       } else {
         this.showAlert('Login Failed', response.message);
       }

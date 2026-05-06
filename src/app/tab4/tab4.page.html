@@ -1,0 +1,330 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    @if (view !== 'friends') {
+      <ion-buttons slot="start">
+        <ion-button (click)="goBack()">
+          <ion-icon name="arrow-back" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+    <ion-title>
+      @if (view === 'friends') { Records }
+      @else if (view === 'friend-detail') { {{ selectedFriend?.name }} }
+      @else { {{ editingRecord ? 'Edit Record' : 'New Record' }} }
+    </ion-title>
+    @if (view === 'friends') {
+      <ion-buttons slot="end">
+        <ion-button (click)="openFriendForm()" title="Add Friend">
+          <ion-icon name="person-add-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button (click)="loadFriends()" title="Refresh">
+          <ion-icon name="refresh-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+    @if (view === 'friend-detail') {
+      <ion-buttons slot="end">
+        <ion-button (click)="openFriendForm(selectedFriend!)" title="Edit Friend">
+          <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+        <ion-button (click)="openNewRecordForm()" title="Add Record">
+          <ion-icon name="add-circle-outline" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    }
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- ═══════════════════════════════════════════════════════ FRIENDS VIEW -->
+  @if (view === 'friends') {
+    <div class="page-container">
+
+      <!-- WP Credentials card -->
+      @if (!hasCredentials) {
+        <ion-card class="cred-card">
+          <ion-card-header>
+            <ion-card-title>
+              <ion-icon name="lock-closed-outline"></ion-icon> Connect to WordPress
+            </ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p>Enter your WP username and Application Password to sync records.</p>
+            <ion-button expand="block" (click)="openCredentialsDialog()" class="ion-margin-top">
+              <ion-icon name="key-outline" slot="start"></ion-icon>
+              Set Credentials
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      }
+
+      @if (hasCredentials) {
+        <!-- Credentials status bar -->
+        <div class="cred-bar">
+          <ion-text color="medium">
+            <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+            Connected as <strong>{{ recordsSvc.getUsername() }}</strong>
+          </ion-text>
+          <div class="cred-bar-actions">
+            <ion-button fill="clear" size="small" (click)="openCredentialsDialog()">Update</ion-button>
+            <ion-button fill="clear" size="small" color="danger" (click)="clearCredentials()">Clear</ion-button>
+          </div>
+        </div>
+
+        <!-- Loading / Error -->
+        @if (friendsLoading) {
+          <div class="center-state">
+            <ion-spinner name="crescent"></ion-spinner>
+            <ion-text color="medium">Loading friends…</ion-text>
+          </div>
+        }
+
+        @if (friendsError && !friendsLoading) {
+          <ion-card color="danger" class="error-card">
+            <ion-card-content>
+              <ion-icon name="alert-circle-outline"></ion-icon> {{ friendsError }}
+              <ion-button fill="clear" color="light" (click)="loadFriends()">Retry</ion-button>
+            </ion-card-content>
+          </ion-card>
+        }
+
+        <!-- Friends list -->
+        @if (!friendsLoading && !friendsError) {
+          @if (friends.length === 0) {
+            <div class="empty-state">
+              <ion-icon name="people-outline"></ion-icon>
+              <p>No friends yet. Tap + to add one.</p>
+            </div>
+          }
+          @for (friend of friends; track friend.id) {
+            <ion-card class="friend-card" (click)="openFriendDetail(friend)">
+              <ion-card-content>
+                <div class="friend-row">
+                  <div class="friend-avatar">{{ getInitials(friend.name) }}</div>
+                  <div class="friend-info">
+                    <h3>{{ friend.name }}</h3>
+                    @if (friend.phone) {
+                      <p class="phone">{{ friend.phone }}</p>
+                    }
+                    @let bal = getBalance(friend.id);
+                    @if (bal) {
+                      <div class="balance-row">
+                        @if (bal.net > 0) {
+                          <ion-badge color="success">Owes you PKR {{ bal.net | number:'1.0-0' }}</ion-badge>
+                        } @else if (bal.net < 0) {
+                          <ion-badge color="danger">You owe PKR {{ (bal.net * -1) | number:'1.0-0' }}</ion-badge>
+                        } @else {
+                          <ion-badge color="medium">Settled</ion-badge>
+                        }
+                      </div>
+                    }
+                  </div>
+                  <div class="friend-actions" (click)="$event.stopPropagation()">
+                    <ion-button fill="clear" size="small" (click)="openFriendForm(friend)">
+                      <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                    <ion-button fill="clear" size="small" color="danger" (click)="confirmDeleteFriend(friend)">
+                      <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                  </div>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          }
+        }
+      }
+    </div>
+  }
+
+  <!-- ══════════════════════════════════════════════ FRIEND DETAIL VIEW -->
+  @if (view === 'friend-detail' && selectedFriend) {
+    <div class="page-container">
+
+      <!-- Bank accounts section -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Bank Accounts</ion-card-title>
+          <ion-card-subtitle>
+            <ion-button fill="outline" size="small" (click)="openAddBankDialog()">
+              <ion-icon name="add-outline" slot="start"></ion-icon> Add Bank
+            </ion-button>
+          </ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content class="no-padding">
+          @if (!selectedFriend.banks || selectedFriend.banks.length === 0) {
+            <ion-item><ion-label color="medium">No bank accounts added.</ion-label></ion-item>
+          }
+          @for (bank of selectedFriend.banks; track bank.id) {
+            <ion-item>
+              <ion-label>
+                <h3>{{ bank.label }} — {{ bank.bankName }}</h3>
+                <p>{{ bank.iban || 'No IBAN' }}</p>
+              </ion-label>
+              @if (bank.isDefault) {
+                <ion-badge slot="end" color="primary">Default</ion-badge>
+              }
+              @if (!bank.isDefault) {
+                <ion-button slot="end" fill="clear" size="small" (click)="setDefaultBank(bank)">Set Default</ion-button>
+              }
+              <ion-button slot="end" fill="clear" size="small" color="danger" (click)="confirmDeleteBank(bank)">
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </ion-item>
+          }
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Records filter bar -->
+      <div class="filter-bar">
+        <ion-select placeholder="All Statuses" [(ngModel)]="filterStatus" (ionChange)="loadFriendRecords()" interface="popover">
+          <ion-select-option value="">All Statuses</ion-select-option>
+          <ion-select-option value="pending">Pending</ion-select-option>
+          <ion-select-option value="partially_cleared">Partially Cleared</ion-select-option>
+          <ion-select-option value="cleared">Cleared</ion-select-option>
+        </ion-select>
+        <ion-select placeholder="All Types" [(ngModel)]="filterType" (ionChange)="loadFriendRecords()" interface="popover">
+          <ion-select-option value="">All Types</ion-select-option>
+          <ion-select-option value="sent">Sent</ion-select-option>
+          <ion-select-option value="received">Received</ion-select-option>
+        </ion-select>
+      </div>
+
+      <!-- Records list -->
+      @if (recordsLoading) {
+        <div class="center-state">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      }
+
+      @if (!recordsLoading) {
+        @if (friendRecords.length === 0) {
+          <div class="empty-state">
+            <ion-icon name="receipt-outline"></ion-icon>
+            <p>No records found. Tap + to add one.</p>
+          </div>
+        }
+        @for (record of friendRecords; track record.id) {
+          <ion-card class="record-card">
+            <ion-card-content>
+              <div class="record-row">
+                <div class="record-left">
+                  <div class="record-amount">
+                    <ion-badge [color]="getTypeColor(record.type)">{{ getTypeLabel(record.type) }}</ion-badge>
+                    <span class="amount">PKR {{ record.amount | number:'1.0-2' }}</span>
+                  </div>
+                  <ion-badge [color]="getStatusColor(record.status)">{{ getStatusLabel(record.status) }}</ion-badge>
+                  @if (record.datetime) {
+                    <p class="record-date">{{ record.datetime | date:'dd MMM yyyy, HH:mm' }}</p>
+                  }
+                  @if (record.transactionId) {
+                    <p class="record-meta">TXN: {{ record.transactionId }}</p>
+                  }
+                  @if (record.sentFrom) {
+                    <p class="record-meta">From: {{ record.sentFrom }}</p>
+                  }
+                  @if (record.notes) {
+                    <p class="record-notes">{{ record.notes }}</p>
+                  }
+                  @if (record.status === 'partially_cleared' && record.clearedTotal > 0) {
+                    <p class="record-meta">Cleared: PKR {{ record.clearedTotal | number:'1.0-2' }}</p>
+                  }
+                </div>
+                <div class="record-actions">
+                  <ion-button fill="clear" size="small" (click)="openEditRecordForm(record)">
+                    <ion-icon name="pencil-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                  <ion-button fill="clear" size="small" color="danger" (click)="confirmDeleteRecord(record)">
+                    <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        }
+      }
+    </div>
+
+    <!-- FAB -->
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+      <ion-fab-button (click)="openNewRecordForm()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  }
+
+  <!-- ═══════════════════════════════════════════════════ RECORD FORM VIEW -->
+  @if (view === 'record-form') {
+    <div class="page-container form-container">
+
+      <ion-card>
+        <ion-card-content>
+
+          <!-- Type -->
+          <ion-item>
+            <ion-label position="stacked">Transaction Type <ion-text color="danger">*</ion-text></ion-label>
+            <ion-select [(ngModel)]="recordForm.type" interface="popover">
+              <ion-select-option value="sent">Sent (I paid friend)</ion-select-option>
+              <ion-select-option value="received">Received (Friend paid me)</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- Amount -->
+          <ion-item>
+            <ion-label position="stacked">Amount (PKR) <ion-text color="danger">*</ion-text></ion-label>
+            <ion-input type="number" [(ngModel)]="recordForm.amount" placeholder="0.00" min="0" step="0.01"></ion-input>
+          </ion-item>
+
+          <!-- Status -->
+          <ion-item>
+            <ion-label position="stacked">Status <ion-text color="danger">*</ion-text></ion-label>
+            <ion-select [(ngModel)]="recordForm.status" interface="popover">
+              <ion-select-option value="pending">Pending</ion-select-option>
+              <ion-select-option value="partially_cleared">Partially Cleared</ion-select-option>
+              <ion-select-option value="cleared">Cleared</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <!-- Date/Time -->
+          <ion-item>
+            <ion-label position="stacked">Date &amp; Time</ion-label>
+            <ion-input type="datetime-local" [(ngModel)]="recordForm.datetime"></ion-input>
+          </ion-item>
+
+          <!-- Transaction ID -->
+          <ion-item>
+            <ion-label position="stacked">Transaction ID / Reference</ion-label>
+            <ion-input type="text" [(ngModel)]="recordForm.transactionId" placeholder="Optional"></ion-input>
+          </ion-item>
+
+          <!-- Sent From -->
+          <ion-item>
+            <ion-label position="stacked">Sent From (Bank/Account)</ion-label>
+            <ion-input type="text" [(ngModel)]="recordForm.sentFrom" placeholder="Optional"></ion-input>
+          </ion-item>
+
+          <!-- Notes -->
+          <ion-item>
+            <ion-label position="stacked">Notes</ion-label>
+            <ion-textarea [(ngModel)]="recordForm.notes" placeholder="Optional notes…" rows="3" auto-grow></ion-textarea>
+          </ion-item>
+
+        </ion-card-content>
+      </ion-card>
+
+      <div class="form-actions">
+        <ion-button fill="outline" color="medium" (click)="cancelRecordForm()" [disabled]="formSaving">
+          Cancel
+        </ion-button>
+        <ion-button (click)="saveRecord()" [disabled]="formSaving">
+          @if (formSaving) {
+            <ion-spinner name="crescent" slot="start"></ion-spinner>
+          }
+          {{ editingRecord ? 'Update' : 'Save' }}
+        </ion-button>
+      </div>
+
+    </div>
+  }
+
+</ion-content>

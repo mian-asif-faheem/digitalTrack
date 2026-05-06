@@ -1,0 +1,223 @@
+.page-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 12px 8px 80px;
+}
+
+.form-container {
+  padding-bottom: 32px;
+}
+
+// ── Credentials bar ──────────────────────────────────────────────────────────
+
+.cred-card {
+  margin-bottom: 16px;
+  ion-card-title {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.cred-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  margin-bottom: 8px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  font-size: 0.85rem;
+
+  ion-icon {
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+}
+
+.cred-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+// ── States ───────────────────────────────────────────────────────────────────
+
+.center-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 16px;
+  color: var(--ion-color-medium);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 48px 16px;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 3rem;
+  }
+
+  p { margin: 0; font-size: 0.95rem; }
+}
+
+.error-card {
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+// ── Friend cards ─────────────────────────────────────────────────────────────
+
+.friend-card {
+  margin: 0 0 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+
+  &:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+
+  ion-card-content { padding: 14px 12px; }
+}
+
+.friend-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.friend-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--ion-color-primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.friend-info {
+  flex: 1;
+  min-width: 0;
+
+  h3 { margin: 0 0 2px; font-size: 1rem; font-weight: 600; }
+  p.phone { margin: 0 0 4px; font-size: 0.82rem; color: var(--ion-color-medium); }
+}
+
+.balance-row {
+  margin-top: 4px;
+}
+
+.friend-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+// ── Filter bar ───────────────────────────────────────────────────────────────
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 0 2px;
+
+  ion-select {
+    flex: 1;
+    border: 1px solid var(--ion-color-light-shade);
+    border-radius: 8px;
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    background: var(--ion-color-light);
+  }
+}
+
+// ── Record cards ─────────────────────────────────────────────────────────────
+
+.record-card {
+  margin: 0 0 8px;
+  border-radius: 10px;
+
+  ion-card-content { padding: 12px; }
+}
+
+.record-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.record-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.record-amount {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+
+  .amount {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ion-text-color);
+  }
+}
+
+.record-date {
+  margin: 4px 0 2px;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.record-meta {
+  margin: 2px 0;
+  font-size: 0.8rem;
+  color: var(--ion-color-medium);
+}
+
+.record-notes {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  color: var(--ion-text-color);
+  font-style: italic;
+}
+
+.record-actions {
+  display: flex;
+  flex-direction: column;
+}
+
+// ── Record form ───────────────────────────────────────────────────────────────
+
+ion-card {
+  margin: 0 0 12px;
+  border-radius: 12px;
+}
+
+.no-padding {
+  padding: 0;
+  ion-item { --padding-start: 12px; }
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 0 4px;
+}

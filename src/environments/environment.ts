@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api', // Replace with your backend API URL
+  apiUrl: 'http://localhost:3000/api',
+  wpApiUrl: 'https://records.maafstudios.com',
   firebaseConfig: {
     apiKey: 'AIzaSyCVawJ4lazHZBJFu1Du2q1IuKniYpjep2Y',
     authDomain: 'digitaltrack-ed483.firebaseapp.com',

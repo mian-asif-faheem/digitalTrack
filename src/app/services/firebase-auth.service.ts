@@ -1,14 +1,17 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, filter, take } from 'rxjs';
 import { 
-  Auth, 
-  signInWithEmailAndPassword, 
+  Auth,
+  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
   sendEmailVerification,
   User as FirebaseUser,
   onAuthStateChanged,
-  updateProfile
+  updateProfile,
+  updatePassword,
+  reauthenticateWithCredential,
+  EmailAuthProvider
 } from '@angular/fire/auth';
 import { 
   Firestore, 
@@ -30,9 +33,17 @@ import { User, UserRole, LoginCredentials, SignupData, AuthResponse } from '../m
 export class FirebaseAuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
-  
+
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
+
+  // Emits true once Firebase has resolved the initial auth state (null or user)
+  private authReadySubject = new BehaviorSubject<boolean>(false);
+  public authReady$ = this.authReadySubject.asObservable();
+
+  get currentUser(): import('../models/user.model').User | null {
+    return this.currentUserSubject.getValue();
+  }
 
   constructor(
     private auth: Auth,
@@ -45,8 +56,6 @@ export class FirebaseAuthService {
     onAuthStateChanged(this.auth, async (firebaseUser) => {
       if (firebaseUser) {
         const userData = await this.getUserData(firebaseUser.uid);
-        // Guard: only update state if this user is still the current user
-        // (prevents stale Firestore reads from overwriting state after logout)
         if (this.auth.currentUser?.uid === firebaseUser.uid && userData) {
           this.currentUserSubject.next(userData);
           this.isAuthenticatedSubject.next(true);
@@ -55,7 +64,14 @@ export class FirebaseAuthService {
         this.currentUserSubject.next(null);
         this.isAuthenticatedSubject.next(false);
       }
+      this.authReadySubject.next(true);
     });
+  }
+
+  waitForAuthReady(): Promise<void> {
+    return new Promise(resolve =>
+      this.authReady$.pipe(filter(ready => ready), take(1)).subscribe(() => resolve())
+    );
   }
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -304,6 +320,45 @@ export class FirebaseAuthService {
         return 'Network error. Please check your connection.';
       default:
         return 'An error occurred. Please try again.';
+    }
+  }
+
+  async updateUserProfile(firstName: string, lastName: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const firebaseUser = this.auth.currentUser;
+      const currentUser = this.getCurrentUser();
+      if (!firebaseUser || !currentUser) return { success: false, message: 'Not authenticated.' };
+
+      await updateProfile(firebaseUser, { displayName: `${firstName} ${lastName}` });
+      await updateDoc(doc(this.firestore, 'users', firebaseUser.uid), {
+        firstName, lastName, updatedAt: new Date()
+      });
+
+      this.currentUserSubject.next({ ...currentUser, firstName, lastName, updatedAt: new Date() });
+      return { success: true, message: 'Profile updated successfully.' };
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      return { success: false, message: 'Failed to update profile.' };
+    }
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
+    try {
+      const firebaseUser = this.auth.currentUser;
+      if (!firebaseUser?.email) return { success: false, message: 'Not authenticated.' };
+
+      const credential = EmailAuthProvider.credential(firebaseUser.email, currentPassword);
+      await reauthenticateWithCredential(firebaseUser, credential);
+      await updatePassword(firebaseUser, newPassword);
+      return { success: true, message: 'Password changed successfully.' };
+    } catch (error: any) {
+      if (error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+        return { success: false, message: 'Current password is incorrect.' };
+      }
+      if (error.code === 'auth/weak-password') {
+        return { success: false, message: 'New password must be at least 6 characters.' };
+      }
+      return { success: false, message: 'Failed to change password. Please try again.' };
     }
   }
 
