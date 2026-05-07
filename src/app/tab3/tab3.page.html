@@ -122,6 +122,26 @@
           </ion-card-content>
         </ion-card>
 
+        <!-- Appearance -->
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Appearance</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="no-padding">
+            <ion-list lines="none">
+              <ion-item>
+                <ion-icon name="moon-outline" slot="start" color="primary"></ion-icon>
+                <ion-label>Dark Mode</ion-label>
+                <ion-toggle
+                  slot="end"
+                  [checked]="themeSvc.isDark"
+                  (ionChange)="onThemeToggle($event)">
+                </ion-toggle>
+              </ion-item>
+            </ion-list>
+          </ion-card-content>
+        </ion-card>
+
         <!-- Security -->
         <ion-card>
           <ion-card-header>

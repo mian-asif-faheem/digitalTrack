@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { FirebaseAuthService } from '../services/firebase-auth.service';
+import { ThemeService } from '../services/theme.service';
 import { User, UserRole } from '../models/user.model';
 
 @Component({
@@ -21,7 +22,8 @@ export class Tab3Page implements OnInit {
     private router: Router,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    public themeSvc: ThemeService,
   ) {}
 
   ngOnInit() {
@@ -93,6 +95,10 @@ export class Tab3Page implements OnInit {
     this.isEditing = false;
     this.loadUser();
     this.showToast(result.message, result.success ? 'success' : 'danger');
+  }
+
+  async onThemeToggle(event: any) {
+    await this.themeSvc.setTheme(event.detail.checked ? 'dark' : 'light');
   }
 
   async openChangePassword() {
