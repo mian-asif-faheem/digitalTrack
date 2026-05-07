@@ -1,0 +1,30 @@
+<!-- Outer container — fixed to bottom, overflow:visible so pill can escape upward -->
+<div class="atb-wrap">
+
+  <!-- SVG wave bar — fills bar shape, wave cutout shows page bg through it -->
+  <svg class="wave-svg" [attr.width]="barW" height="70" [attr.viewBox]="'0 0 ' + barW + ' 70'"
+       preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path #wavePath fill="#ffffff" />
+  </svg>
+
+  <!-- Safe-area fill below SVG (iOS home indicator strip) -->
+  <div class="safe-fill"></div>
+
+  <!-- Floating active-tab pill — GSAP-animated translateX -->
+  <div class="floating-pill" #pill>
+    <ion-icon [name]="activeTab?.iconActive || 'home'"></ion-icon>
+  </div>
+
+  <!-- Tab buttons row -->
+  <div class="tab-row">
+    @for (tab of tabs; track tab.id) {
+      <button class="tab-btn" [class.is-active]="tab.id === activeId" (click)="navigate(tab)">
+        <div class="icon-slot">
+          <ion-icon [name]="tab.icon"></ion-icon>
+        </div>
+        <span class="tab-label">{{ tab.label }}</span>
+      </button>
+    }
+  </div>
+
+</div>
