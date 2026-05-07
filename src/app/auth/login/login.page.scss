@@ -7,62 +7,61 @@
 .logo-section {
   text-align: center;
   margin-bottom: 40px;
-  
-  ion-icon {
-    margin-bottom: 16px;
-  }
-  
+
+  ion-icon { margin-bottom: 16px; }
+
   h1 {
     color: var(--ion-color-primary);
-    margin: 16px 0 8px 0;
+    margin: 16px 0 8px;
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 700;
   }
-  
+
   p {
     color: var(--ion-color-medium);
-    margin: 0 0 20px 0;
+    margin: 0 0 20px;
   }
 }
 
 ion-item {
-  margin-bottom: 16px;
-  --border-radius: 8px;
-  --background: var(--ion-color-light);
+  margin-bottom: 12px;
+  --border-radius: 12px;
+  --border-width: 1px;
+  --border-style: solid;
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .login-button {
-  margin: 32px 0 24px 0;
-  --border-radius: 8px;
-  height: 48px;
+  margin: 28px 0 20px;
+  --border-radius: 14px;
+  height: 50px;
   font-weight: 600;
+  font-size: 1rem;
+  --box-shadow: 0 4px 20px rgba(212, 131, 106, 0.4);
 }
 
 .signup-section {
   text-align: center;
-  margin: 24px 0;
-  
+  margin: 20px 0;
+
   p {
     color: var(--ion-color-medium);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
 }
 
 .demo-credentials {
-  margin-top: 40px;
+  margin-top: 32px;
 
-  ion-card {
-    --background: var(--ion-color-light);
+  ion-card-title {
+    font-size: 1.05rem;
+    color: var(--ion-color-primary);
+  }
 
-    ion-card-title {
-      font-size: 1.1rem;
-      color: var(--ion-color-primary);
-    }
-
-    ion-card-subtitle {
-      font-size: 0.8rem;
-      margin-top: 4px;
-    }
+  ion-card-subtitle {
+    font-size: 0.8rem;
+    margin-top: 4px;
   }
 
   .demo-row {
@@ -75,12 +74,10 @@ ion-item {
     transition: background 0.15s;
 
     &:not(:last-child) {
-      border-bottom: 1px solid var(--ion-color-light-shade);
+      border-bottom: 1px solid var(--ion-border-color, rgba(0,0,0,0.06));
     }
 
-    &:active {
-      background: var(--ion-color-light-shade);
-    }
+    &:active { background: rgba(255,255,255,0.3); }
   }
 
   .demo-role {
@@ -90,25 +87,15 @@ ion-item {
     border-radius: 12px;
     white-space: nowrap;
 
-    &.super-admin { background: #7c3aed22; color: #7c3aed; }
-    &.admin       { background: #dc262622; color: #dc2626; }
-    &.sales       { background: #d9770622; color: #d97706; }
-    &.user        { background: #05966922; color: #059669; }
+    &.super-admin { background: rgba(124,58,237,0.12); color: #7c3aed; }
+    &.admin       { background: rgba(220,38,38,0.12);  color: #dc2626; }
+    &.sales       { background: rgba(217,119,6,0.12);  color: #d97706; }
+    &.user        { background: rgba(5,150,105,0.12);  color: #059669; }
   }
 
   .demo-info {
     font-size: 0.8rem;
     color: var(--ion-color-medium);
     word-break: break-all;
-  }
-}
-
-@media (max-width: 768px) {
-  .login-container {
-    padding: 16px;
-  }
-  
-  .logo-section h1 {
-    font-size: 2rem;
   }
 }

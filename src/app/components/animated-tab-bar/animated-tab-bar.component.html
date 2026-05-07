@@ -1,10 +1,13 @@
 <!-- Outer container — fixed to bottom, overflow:visible so pill can escape upward -->
 <div class="atb-wrap">
 
+  <!-- Frosted glass blur layer -->
+  <div class="atb-blur"></div>
+
   <!-- SVG wave bar — fills bar shape, wave cutout shows page bg through it -->
   <svg class="wave-svg" [attr.width]="barW" height="70" [attr.viewBox]="'0 0 ' + barW + ' 70'"
        preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <path #wavePath fill="#ffffff" />
+    <path #wavePath style="fill: var(--glass-toolbar-bg, rgba(247,245,243,0.72))" />
   </svg>
 
   <!-- Safe-area fill below SVG (iOS home indicator strip) -->

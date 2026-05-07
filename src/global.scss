@@ -1,12 +1,5 @@
 /*
  * App Global CSS
- * ----------------------------------------------------------------------------
- * Put style rules here that you want to apply globally. These styles are for
- * the entire app and not just one component. Additionally, this file can be
- * used as an entry point to import other CSS/Sass files to be included in the
- * output CSS.
- * For more information on global stylesheets, visit the documentation:
- * https://ionicframework.com/docs/layout/global-stylesheets
  */
 
 /* Core CSS required for Ionic components to work properly */
@@ -18,29 +11,45 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Optional CSS utils that can be commented out */
+/* Optional CSS utils */
 @import "@ionic/angular/css/padding.css";
 @import "@ionic/angular/css/float-elements.css";
 @import "@ionic/angular/css/text-alignment.css";
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
-
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 @import "@ionic/angular/css/palettes/dark.class.css";
 /* @import "@ionic/angular/css/palettes/dark.system.css"; */
 
-// Bottom padding so content doesn't hide behind the animated tab bar
-app-tabs ion-content {
-  --padding-bottom: 100px;
+// ── Glass system variables ───────────────────────────────────────────────────
+:root {
+  --glass-bg:          rgba(255, 255, 255, 0.55);
+  --glass-border:      rgba(255, 255, 255, 0.75);
+  --glass-blur:        18px;
+  --glass-shadow:      0 4px 24px rgba(0, 0, 0, 0.08);
+  --glass-radius:      18px;
+  --glass-toolbar-bg:  rgba(247, 245, 243, 0.72);
+
+  --page-gradient: linear-gradient(145deg, #f5e8e0 0%, #ede8f0 40%, #e0ecf0 100%);
 }
 
+.ion-palette-dark {
+  --glass-bg:          rgba(40, 38, 36, 0.55);
+  --glass-border:      rgba(255, 255, 255, 0.10);
+  --glass-shadow:      0 4px 24px rgba(0, 0, 0, 0.35);
+  --glass-toolbar-bg:  rgba(26, 25, 23, 0.72);
+
+  --page-gradient: linear-gradient(145deg, #1e1614 0%, #1a1720 40%, #141a1e 100%);
+}
+
+// ── Page gradient on every ion-content ──────────────────────────────────────
+ion-content {
+  --background: var(--page-gradient);
+}
+
+// ── Noise grain overlay (same as original — 0.03 opacity ::after) ────────────
+ion-content::part(scroll)::after,
 ion-content::after {
   content: "";
   position: absolute;
@@ -50,3 +59,38 @@ ion-content::after {
   pointer-events: none;
   z-index: 9999;
 }
+
+// ── Global ion-card → glass ─────────────────────────────────────────────────
+ion-card {
+  --background: var(--glass-bg);
+  border-radius: var(--glass-radius) !important;
+  box-shadow: var(--glass-shadow) !important;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+// ── Toolbar vibrancy ────────────────────────────────────────────────────────
+ion-toolbar {
+  --background: var(--glass-toolbar-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+// ── ion-item glass inputs ───────────────────────────────────────────────────
+ion-item {
+  --background: rgba(255, 255, 255, 0.45);
+  --border-color: rgba(255, 255, 255, 0.6);
+  --border-radius: 12px;
+}
+
+.ion-palette-dark ion-item {
+  --background: rgba(255, 255, 255, 0.06);
+  --border-color: rgba(255, 255, 255, 0.12);
+}
+
+// ── Bottom padding for animated tab bar ─────────────────────────────────────
+app-tabs ion-content {
+  --padding-bottom: 100px;
+}
+
